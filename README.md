@@ -43,7 +43,7 @@ react-native link react-native-svg # not react-native-svg-uri !!!
 Here's a simple example:
 
 ```javascript
-import SvgUri from 'react-native-svg-uri';
+import SvgUri from 'react-native-svg-uri-reborn';
 
 const TestSvgUri = () => (
   <View style={styles.container}>
