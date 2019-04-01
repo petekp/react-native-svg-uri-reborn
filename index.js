@@ -431,7 +431,7 @@ SvgUri.propTypes = {
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   svgXmlData: PropTypes.string,
   source: PropTypes.any,
-  strokeProp: this.state.stroke,
+  strokeProp: PropTypes.any,
   fill: PropTypes.string,
   onLoad: PropTypes.func,
   fillAll: PropTypes.bool
