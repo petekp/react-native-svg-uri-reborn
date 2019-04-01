@@ -18,6 +18,7 @@ import Svg, {
   Text,
   TSpan,
   Defs,
+  Use,
   Stop
 } from 'react-native-svg';
 
@@ -30,6 +31,7 @@ const ACCEPTED_SVG_ELEMENTS = [
   'path',
   'rect',
   'defs',
+  'use',
   'line',
   'linearGradient',
   'radialGradient',
@@ -61,7 +63,10 @@ const IMAGE_ATTS = ['width', 'height', 'preserveAspectRatio', 'href', 'clipPath'
 const POLYGON_ATTS = ['points'];
 const POLYLINE_ATTS = ['points'];
 
+const USE_ATTS = ['href'];
+
 const COMMON_ATTS = [
+  'id',
   'fill',
   'fillOpacity',
   'stroke',
@@ -84,6 +89,17 @@ const COMMON_ATTS = [
 ];
 
 let ind = 0;
+
+// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/use#Attributes
+function fixXlinkHref(node) {
+  if (node.attributes) {
+    const hrefAttr = Object.keys(node.attributes).find(a => node.attributes[a].name === 'href');
+    const legacyHrefAttr = Object.keys(node.attributes).find(a => node.attributes[a].name === 'xlink:href');
+
+    return node.attributes[hrefAttr || legacyHrefAttr].value;
+  }
+  return null;
+}
 
 function fixYPosition(y, node) {
   if (node.attributes) {
@@ -239,6 +255,10 @@ class SvgUri extends Component {
         );
       case 'defs':
         return <Defs key={i}>{childs}</Defs>;
+      case 'use':
+        componentAtts = this.obtainComponentAtts(node, USE_ATTS);
+        componentAtts.href = fixXlinkHref(node);
+        return <Use key={i} {...componentAtts}/>;
       case 'linearGradient':
         componentAtts = this.obtainComponentAtts(node, LINEARG_ATTS);
         return (
@@ -358,7 +378,7 @@ class SvgUri extends Component {
   inspectNode(node) {
     // Only process accepted elements
     if (!ACCEPTED_SVG_ELEMENTS.includes(node.nodeName)) {
-      return <View />;
+      return <View key={ind++} />;
     }
 
     // Process the xml node
